@@ -1,6 +1,13 @@
-import './globals.css'
-import Header from '../components/Header'
-export const metadata={title:'EasyCar',description:'P2P car marketplace'}
-export default function RootLayout({children}:{children:React.ReactNode}){
-  return(<html lang='en'><body><Header/>{children}</body></html>)
+import "./globals.css";
+import Header from "@/components/Header";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <Header />
+        <main className="max-w-6xl mx-auto px-4">{children}</main>
+      </body>
+    </html>
+  );
 }
