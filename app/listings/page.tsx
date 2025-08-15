@@ -1,16 +1,30 @@
-import Link from 'next/link'
-import { supabase } from '../../lib/supabaseClient'
-export default async function Listings(){
-  const { data: listings } = await supabase.from('listings').select('*').order('created_at',{ascending:false})
-  return (<main className='max-w-5xl mx-auto p-6'>
-    <h1 className='text-2xl font-bold mb-4'>Marketplace</h1>
-    <div className='grid md:grid-cols-2 gap-4'>
-      {(listings||[]).map((x:any)=>(
-        <Link key={x.id} href={'/listings/'+x.id} className='border border-white/10 rounded p-4 hover:bg-white/5'>
-          <div className='font-semibold'>{x.make} {x.model} · {x.year}</div>
-          <div className='text-white/70'>${'{'}x.price{'}'} · {x.mileage} mi · {x.city}</div>
-        </Link>
-      ))}
-    </div>
-  </main>)
+import { createClient } from "@supabase/supabase-js";
+import CarCard, { Car } from "../../components/CarCard";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+export const dynamic = "force-dynamic";
+
+export default async function ListingsPage() {
+  const { data: cars } = await supabase
+    .from("cars")
+    .select("*")
+    .order("id", { ascending: false });
+
+  return (
+    <main className="mx-auto max-w-7xl px-4 py-10">
+      <h1 className="text-3xl font-bold mb-6">All listings</h1>
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {(cars as Car[] | null)?.map((car) => (
+          <CarCard key={car.id} car={car} />
+        ))}
+      </div>
+      {!cars || cars.length === 0 ? (
+        <p className="text-white/70 mt-6">No listings yet.</p>
+      ) : null}
+    </main>
+  );
 }
