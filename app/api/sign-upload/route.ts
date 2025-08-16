@@ -8,11 +8,10 @@ cloudinary.config({
 
 export async function POST(req: Request) {
   try {
-    const { params = {} } = await req.json().catch(() => ({ params: {} }));
     const timestamp = Math.floor(Date.now() / 1000);
 
     const signature = cloudinary.utils.api_sign_request(
-      { timestamp, upload_preset: "cars_upload", ...params },
+      { timestamp, upload_preset: "cars_upload" },
       process.env.CLOUDINARY_API_SECRET as string
     );
 
@@ -23,9 +22,12 @@ export async function POST(req: Request) {
         apiKey: process.env.CLOUDINARY_API_KEY,
         cloudName: process.env.CLOUDINARY_CLOUD_NAME,
       }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
     );
-  } catch (e) {
+  } catch (err) {
     return new Response(JSON.stringify({ error: "Sign error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
